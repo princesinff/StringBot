@@ -1,4 +1,4 @@
-from StringBot import db
+from StringBot.utils import db
 
 usersdb = db.users
 
