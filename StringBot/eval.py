@@ -28,13 +28,13 @@ async def edit_or_reply(msg: Message, **kwargs):
     await func(**{k: v for k, v in kwargs.items() if k in spec})
 
 
-@Bad.on_edited_message(
+@Client.on_edited_message(
     filters.command("eval")
     & filters.user(OWNER_ID)
     & ~filters.forwarded
     & ~filters.via_bot
 )
-@Bad.on_message(
+@Client.on_message(
     filters.command("eval")
     & filters.user(OWNER_ID)
     & ~filters.forwarded
@@ -138,13 +138,13 @@ async def forceclose_command(_, CallbackQuery):
         return
 
 
-@Bad.on_edited_message(
+@Client.on_edited_message(
     filters.command("sh")
     & filters.user(OWNER_ID)
     & ~filters.forwarded
     & ~filters.via_bot
 )
-@Bad.on_message(
+@Client.on_message(
     filters.command("sh")
     & filters.user(OWNER_ID)
     & ~filters.forwarded
