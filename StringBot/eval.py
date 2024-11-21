@@ -11,7 +11,6 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from config import OWNER_ID
-from StringBot import Bad
 
 
 async def aexec(code, client, message):
