@@ -18,9 +18,6 @@ logging.getLogger("oldpyro").setLevel(logging.ERROR)
 logging.getLogger("telethon").setLevel(logging.ERROR)
 LOGGER = logging.getLogger(__name__)
 
-mongo = MongoCli(config.MONGO_DB_URI)
-db = mongo.StringBot
-
 
 class Bad(Client):
     def __init__(self):
