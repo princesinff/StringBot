@@ -7,7 +7,6 @@ from inspect import getfullargspec
 from io import StringIO
 from time import time
 
-from pyrogram import filters
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
@@ -40,9 +39,9 @@ async def edit_or_reply(msg: Message, **kwargs):
     & ~filters.forwarded
     & ~filters.via_bot
 )
-async def executor(client: Client, message: Message):
+async def executor(client, message):
     if len(message.command) < 2:
-        return await edit_or_reply(message, text="<b>ᴡʜᴀᴛ ʏᴏᴜ ᴡᴀɴɴᴀ ᴇxᴇᴄᴜᴛᴇ ʙᴀʙʏ ?</b>")
+        return await edit_or_reply(message, text="**ᴡʜᴀᴛ ʏᴏᴜ ᴡᴀɴɴᴀ ᴇxᴇᴄᴜᴛᴇ ʙᴀʙʏ ?**")
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
     except IndexError:
@@ -61,20 +60,20 @@ async def executor(client: Client, message: Message):
     stderr = redirected_error.getvalue()
     sys.stdout = old_stdout
     sys.stderr = old_stderr
-    evaluation = "\n"
+    evaluation = ""
     if exc:
-        evaluation += exc
+        evaluation = exc
     elif stderr:
-        evaluation += stderr
+        evaluation = stderr
     elif stdout:
-        evaluation += stdout
+        evaluation = stdout
     else:
-        evaluation += "Success"
-    final_output = f"<b>⥤ ʀᴇsᴜʟᴛ :</b>\n<pre language='python'>{evaluation}</pre>"
+        evaluation = "Success"
+    final_output = f"**OUTPUT**:\n```{evaluation.strip()}```"
     if len(final_output) > 4096:
         filename = "output.txt"
         with open(filename, "w+", encoding="utf8") as out_file:
-            out_file.write(str(evaluation))
+            out_file.write(str(evaluation.strip()))
         t2 = time()
         keyboard = InlineKeyboardMarkup(
             [
@@ -88,7 +87,7 @@ async def executor(client: Client, message: Message):
         )
         await message.reply_document(
             document=filename,
-            caption=f"<b>⥤ ᴇᴠᴀʟ :</b>\n<code>{cmd[0:980]}</code>\n\n<b>⥤ ʀᴇsᴜʟᴛ :</b>\nAttached Document",
+            caption=f"**INPUT:**\n`{cmd[0:980]}`\n\n**OUTPUT:**\n`Attached Document`",
             quote=False,
             reply_markup=keyboard,
         )
@@ -100,10 +99,6 @@ async def executor(client: Client, message: Message):
             [
                 [
                     InlineKeyboardButton(
-                        text="⏳",
-                        callback_data=f"runtime {round(t2-t1, 3)} Seconds",
-                    ),
-                    InlineKeyboardButton(
                         text="🗑",
                         callback_data=f"forceclose abc|{message.from_user.id}",
                     ),
@@ -113,13 +108,13 @@ async def executor(client: Client, message: Message):
         await edit_or_reply(message, text=final_output, reply_markup=keyboard)
 
 
-@Bad.on_callback_query(filters.regex(r"runtime"))
+@Client.on_callback_query(filters.regex(r"runtime"))
 async def runtime_func_cq(_, cq):
     runtime = cq.data.split(None, 1)[1]
     await cq.answer(runtime, show_alert=True)
 
 
-@Bad.on_callback_query(filters.regex("forceclose"))
+@Client.on_callback_query(filters.regex("forceclose"))
 async def forceclose_command(_, CallbackQuery):
     callback_data = CallbackQuery.data.strip()
     callback_request = callback_data.split(None, 1)[1]
@@ -139,20 +134,14 @@ async def forceclose_command(_, CallbackQuery):
 
 
 @Client.on_edited_message(
-    filters.command("sh")
-    & filters.user(OWNER_ID)
-    & ~filters.forwarded
-    & ~filters.via_bot
+    filters.command("sh") & filters.user(OWNER_ID) & ~filters.forwarded & ~filters.via_bot
 )
 @Client.on_message(
-    filters.command("sh")
-    & filters.user(OWNER_ID)
-    & ~filters.forwarded
-    & ~filters.via_bot
+    filters.command("sh") & filters.user(OWNER_ID) & ~filters.forwarded & ~filters.via_bot
 )
-async def shellrunner(_, message: Message):
+async def shellrunner(client, message):
     if len(message.command) < 2:
-        return await edit_or_reply(message, text="<b>ᴇxᴀᴍᴩʟᴇ :</b>\n/sh git pull")
+        return await edit_or_reply(message, text="**ᴇxᴀᴍᴩʟᴇ :**\n/sh git pull")
     text = message.text.split(None, 1)[1]
     if "\n" in text:
         code = text.split("\n")
@@ -166,8 +155,9 @@ async def shellrunner(_, message: Message):
                     stderr=subprocess.PIPE,
                 )
             except Exception as err:
-                await edit_or_reply(message, text=f"<b>ERROR :</b>\n<pre>{err}</pre>")
-            output += f"<b>{code}</b>\n"
+                print(err)
+                await edit_or_reply(message, text=f"**ERROR:**\n```{err}```")
+            output += f"**{code}**\n"
             output += process.stdout.read()[:-1].decode("utf-8")
             output += "\n"
     else:
@@ -189,7 +179,7 @@ async def shellrunner(_, message: Message):
                 tb=exc_tb,
             )
             return await edit_or_reply(
-                message, text=f"<b>ERROR :</b>\n<pre>{''.join(errors)}</pre>"
+                message, text=f"**ERROR:**\n```{''.join(errors)}```"
             )
         output = process.stdout.read()[:-1].decode("utf-8")
     if str(output) == "\n":
@@ -198,13 +188,13 @@ async def shellrunner(_, message: Message):
         if len(output) > 4096:
             with open("output.txt", "w+") as file:
                 file.write(output)
-            await Bad.send_document(
+            await client.send_document(
                 message.chat.id,
                 "output.txt",
-                reply_to_message_id=message.id,
-                caption="<code>Output</code>",
+                reply_to_message_id=message.message_id,
+                caption="`Output`",
             )
             return os.remove("output.txt")
-        await edit_or_reply(message, text=f"<b>OUTPUT :</b>\n<pre>{output}</pre>")
+        await edit_or_reply(message, text=f"**OUTPUT:**\n```{output}```")
     else:
-        await edit_or_reply(message, text="<b>OUTPUT :</b>\n<code>None</code>")
+        await edit_or_reply(message, text="**OUTPUT: **\n`No output`")
