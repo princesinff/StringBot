@@ -8,4 +8,4 @@ TgCrypto==1.2.5
 pymongo==4.6.0
 Flask==2.2.3
 werkzeug==2.2.3
-pyrogram==2.0.106
+git+https://github.com/badmunda98/pyrogram@dev
