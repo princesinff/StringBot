@@ -12,7 +12,7 @@ BOT_TOKEN = getenv("BOT_TOKEN")
 # -------------------------------------------------------------
 OWNER_ID = getenv("OWNER_ID", 7009601543)
 # -------------------------------------------------------------
-MONGO_DB_URI = getenv("MONGO_DB_URI","mongodb+srv://BADMUNDA:BADMYDAD@badhacker.i5nw9na.mongodb.net/")
+MONGO_DB_URI = "mongodb+srv://BADMUNDA:BADMYDAD@badhacker.i5nw9na.mongodb.net/"
 # -------------------------------------------------------------
 SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/PBX_CHAT")
 # -------------------------------------------------------------
