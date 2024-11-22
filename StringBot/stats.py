@@ -1,5 +1,6 @@
 from pyrogram import filters
 from pyrogram.types import Message
+from pyrogram import Client, filters
 
 from config import OWNER_ID
 from StringBot.utils import get_served_users
