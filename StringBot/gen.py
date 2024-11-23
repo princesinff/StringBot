@@ -39,12 +39,15 @@ async def cancelled(msg):
         return True
     return False
 
-async def get_user_input(bot, chat_id, text, timeout=300):
+async def listen_for_input(bot, msg, text, cancelled_func):
     try:
-        user_msg = await bot.ask(chat_id, text, filters=filters.text, timeout=timeout)
+        await msg.reply(text)
+        user_msg = await bot.ask(msg.chat.id, filters=filters.text, timeout=300)
+        if await cancelled_func(user_msg):
+            return None
         return user_msg
     except TimeoutError:
-        await bot.send_message(chat_id, "❍ ᴛɪᴍᴇ ʟɪᴍɪᴛ ᴇxᴄᴇᴇᴅᴇᴅ. ᴩʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ.")
+        await bot.send_message(msg.chat.id, "❍ ᴛɪᴍᴇ ʟɪᴍɪᴛ ᴇxᴄᴇᴇᴅᴇᴅ. ᴩʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ.")
         return None
 
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
@@ -59,8 +62,7 @@ async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is
     await msg.reply(f"**Starting {ty} session generation...**")
 
     # API ID and Hash
-    api_id_msg = await bot.listen(filters.text)
-    api_id_msg = await bot.ask(msg.chat.id, "❍ ᴘʟᴇᴀsᴇ sᴇɴᴅ ʏᴏᴜʀ **ᴀᴘɪ_ɪᴅ** ᴛᴏ ᴘʀᴏᴄᴇᴅᴇ.\n\n❍ ᴄʟɪᴄᴋ ᴏɴ /skip ғᴏʀ ᴜsɪɴɢ ʙᴏᴛ ᴀᴘɪ.", filters=filters.text, timeout=300)
+    api_id_msg = await listen_for_input(bot, msg, "❍ ᴘʟᴇᴀsᴇ sᴇɴᴅ ʏᴏᴜʀ **ᴀᴘɪ_ɪᴅ** ᴛᴏ ᴘʀᴏᴄᴇᴅᴇ.\n\n❍ ᴄʟɪᴄᴋ ᴏɴ /skip ғᴏʀ ᴜsɪɴɢ ʙᴏᴛ ᴀᴘɪ.", cancelled)
     if not api_id_msg or api_id_msg.text == "/skip":
         api_id, api_hash = config.API_ID, config.API_HASH
     else:
@@ -75,10 +77,7 @@ async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is
         api_hash = api_hash_msg.text
 
     # Phone number or bot token
-    if not is_bot:
-        phone_prompt = "**Enter your phone number (e.g., +123456789):**"
-    else:
-        phone_prompt = "**Enter your bot token (e.g., 12345:ABC):**"
+    phone_prompt = "**Enter your bot token (e.g., 12345:ABC):**" if is_bot else "**Enter your phone number (e.g., +123456789):**"
     phone_number_msg = await listen_for_input(bot, msg, phone_prompt, cancelled)
     if not phone_number_msg:
         return
