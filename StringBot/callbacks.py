@@ -8,7 +8,6 @@ async def callback_handler(bot: Client, callback_query: CallbackQuery):
     query = callback_query.data
     try:
         if query == "generate":
-            # Respond to the callback and show options
             await callback_query.answer()
             await callback_query.message.edit_text(
                 ask_ques, reply_markup=InlineKeyboardMarkup(buttons_ques)
@@ -34,10 +33,3 @@ async def callback_handler(bot: Client, callback_query: CallbackQuery):
         await callback_query.message.reply(
             ERROR_MESSAGE.format(str(e))
         )
-
-ERROR_MESSAGE = (
-    "Something went wrong!\n\n"
-    "**Error:** {}\n\n"
-    "Please forward this message to @PBX_CHAT if this issue persists.\n"
-    "Make sure the error doesn't contain sensitive information, as this bot doesn't log errors."
-)
