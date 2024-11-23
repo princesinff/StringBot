@@ -39,23 +39,25 @@ async def cancelled(msg):
         return True
     return False
 
-async def listen_for_input(bot, msg, text, cancelled_func):
+async def listen_for_input(bot, msg, text, cancelled_func=None):
+    """Listen for user input by prompting them and waiting for a response."""
     await msg.reply(text)
 
-    # Listen for the next message from the same user
+    # Define a custom filter to listen to messages from the same user
     user_id = msg.from_user.id
+    chat_id = msg.chat.id
 
-    def check_reply(reply):
-        return reply.from_user.id == user_id
+    def input_filter(_, __, message: Message):
+        return message.from_user.id == user_id and message.chat.id == chat_id
 
     try:
-        # Wait for a response with a filter for user ID
-        user_msg = await bot.listen(msg.chat.id, filters=filters.create(check_reply), timeout=300)
-        if await cancelled_func(user_msg):
+        # Wait for the next message that satisfies the filter
+        response = await bot.listen(chat_id, filters=input_filter, timeout=300)
+        if cancelled_func and await cancelled_func(response):
             return None
-        return user_msg
+        return response
     except TimeoutError:
-        await bot.send_message(msg.chat.id, "❍ ᴛɪᴍᴇ ʟɪᴍɪᴛ ᴇxᴄᴇᴇᴅᴇᴅ. ᴩʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ.")
+        await bot.send_message(chat_id, "❍ Time limit exceeded. Please try again.")
         return None
 
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
@@ -70,7 +72,7 @@ async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is
     await msg.reply(f"**Starting {ty} session generation...**")
 
     # API ID and Hash
-    api_id_msg = await listen_for_input(bot, msg, "❍ ᴘʟᴇᴀsᴇ sᴇɴᴅ ʏᴏᴜʀ **ᴀᴘɪ_ɪᴅ** ᴛᴏ ᴘʀᴏᴄᴇᴅᴇ.\n\n❍ ᴄʟɪᴄᴋ ᴏɴ /skip ғᴏʀ ᴜsɪɴɢ ʙᴏᴛ ᴀᴘɪ.", cancelled)
+    api_id_msg = await listen_for_input(bot, msg, "❍ Please send your **API_ID** to proceed.\n\n❍ Click on /skip to use the bot's API.", cancelled)
     if not api_id_msg or api_id_msg.text == "/skip":
         api_id, api_hash = config.API_ID, config.API_HASH
     else:
