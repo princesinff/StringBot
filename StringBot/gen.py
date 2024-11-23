@@ -39,16 +39,16 @@ async def cancelled(msg):
         return True
     return False
 
-async def listen_for_input(bot, msg, prompt, cancel_callback):
-    await msg.reply(prompt)
+async def get_user_input(bot, chat_id, text, timeout=300):
     try:
-        user_msg = await bot.listen(msg.chat.id, timeout=300)
-        if await cancel_callback(user_msg):
-            return None
+        user_msg = await bot.ask(chat_id, text, filters=filters.text, timeout=timeout)
         return user_msg
     except TimeoutError:
-        await msg.reply("**Time limit exceeded! Please restart the process.**", reply_markup=InlineKeyboardMarkup(buttons_ques))
+        await bot.send_message(chat_id, "❍ ᴛɪᴍᴇ ʟɪᴍɪᴛ ᴇxᴄᴇᴇᴅᴇᴅ. ᴩʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ.")
         return None
+        api_id_msg = await get_user_input(bot, msg.chat.id, "❍ ᴘʟᴇᴀsᴇ sᴇɴᴅ ʏᴏᴜʀ **ᴀᴘɪ_ɪᴅ** ᴛᴏ ᴘʀᴏᴄᴇᴅᴇ.")
+if api_id_msg is None:
+    return
 
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
     ty = "Telethon" if telethon else "Pyrogram"
