@@ -41,25 +41,19 @@ async def cancelled(msg):
     return False
 
 async def listen_for_input(bot, msg, prompt, timeout=300):
-    """Prompt the user for input and wait for their response."""
+    """Prompt the user and wait for their response."""
     chat_id = msg.chat.id
-    user_id = msg.from_user.id
 
-    # Send the prompt to the user
+    # Send the prompt
     await bot.send_message(chat_id, prompt)
 
-    # Wait for the next message from the same user in the same chat
     try:
-        response = await bot.listen(
-            chat_id,
-            filters=filters.private & filters.user(user_id),
-            timeout=timeout,
-        )
+        # Use the `ask` method to get the user's next message
+        response = await bot.ask(chat_id, timeout=timeout, filters=filters.text)
         return response
     except TimeoutError:
         await bot.send_message(chat_id, "❍ Time limit exceeded. Please try again.")
         return None
-
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
     session_type = "Telethon" if telethon else "Pyrogram"
     if pyro_v3:
@@ -136,4 +130,3 @@ async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is
         await msg.reply(f"**Session generated successfully:**\n\n`{session_string}`\n\n**Keep it safe!**")
     finally:
         await client.disconnect()
-
