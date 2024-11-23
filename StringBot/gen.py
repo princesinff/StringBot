@@ -46,9 +46,6 @@ async def get_user_input(bot, chat_id, text, timeout=300):
     except TimeoutError:
         await bot.send_message(chat_id, "❍ ᴛɪᴍᴇ ʟɪᴍɪᴛ ᴇxᴄᴇᴇᴅᴇᴅ. ᴩʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ.")
         return None
-        api_id_msg = await get_user_input(bot, msg.chat.id, "❍ ᴘʟᴇᴀsᴇ sᴇɴᴅ ʏᴏᴜʀ **ᴀᴘɪ_ɪᴅ** ᴛᴏ ᴘʀᴏᴄᴇᴅᴇ.")
-if api_id_msg is None:
-    return
 
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
     ty = "Telethon" if telethon else "Pyrogram"
