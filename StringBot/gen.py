@@ -1,7 +1,6 @@
 import asyncio
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 from telethon.errors import (
@@ -35,28 +34,17 @@ buttons_ques = [
 async def main(_, msg: Message):
     await msg.reply(ask_ques, reply_markup=InlineKeyboardMarkup(buttons_ques))
 
-async def cancelled(msg):
-    if msg.text.lower() in ["/cancel", "/restart"]:
-        await msg.reply("**Process cancelled or restarted.**", reply_markup=InlineKeyboardMarkup(buttons_ques))
-        return True
-    return False
 
-
-async def listen_for_input(bot, msg: Message, prompt: str, timeout=300):
+async def listen_for_input(bot: Client, msg: Message, prompt: str, timeout=300):
     """Prompt the user and wait for their response."""
     chat_id = msg.chat.id
     user_id = msg.from_user.id
 
     await bot.send_message(chat_id, prompt)  # Send the prompt to the user
 
-    response = None
-
-    def check_filter(_, message: Message):
-        return message.chat.id == chat_id and message.from_user.id == user_id and message.text
-
     try:
-        # Handle user response
-        response = await bot.listen(filters.create(check_filter), timeout=timeout)
+        # Wait for the user's next message
+        response = await bot.listen(chat_id, timeout=timeout)
         return response
     except asyncio.TimeoutError:
         await bot.send_message(chat_id, "❍ Time limit exceeded. Please try again.")
@@ -64,7 +52,8 @@ async def listen_for_input(bot, msg: Message, prompt: str, timeout=300):
     except Exception as e:
         await bot.send_message(chat_id, f"❍ An unexpected error occurred: {e}")
         return None
-        
+
+
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
     ty = "Telethon" if telethon else "Pyrogram"
     if pyro_v3:
