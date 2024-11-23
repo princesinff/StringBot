@@ -62,7 +62,8 @@ async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is
     await msg.reply(f"**Starting {ty} session generation...**")
 
     # API ID and Hash
-    api_id_msg = await listen_for_input(bot, msg, "**Send your API_ID:**\nOr type `/skip` to use bot's default API.", cancelled)
+    api_id_msg = await bot.listen(filters.text)
+    api_id_msg = await bot.ask(msg.chat.id, "❍ ᴘʟᴇᴀsᴇ sᴇɴᴅ ʏᴏᴜʀ **ᴀᴘɪ_ɪᴅ** ᴛᴏ ᴘʀᴏᴄᴇᴅᴇ.\n\n❍ ᴄʟɪᴄᴋ ᴏɴ /skip ғᴏʀ ᴜsɪɴɢ ʙᴏᴛ ᴀᴘɪ.", filters=filters.text, timeout=300)
     if not api_id_msg or api_id_msg.text == "/skip":
         api_id, api_hash = config.API_ID, config.API_HASH
     else:
