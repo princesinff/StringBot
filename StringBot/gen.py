@@ -40,32 +40,39 @@ async def cancelled(msg):
         return True
     return False
 
-async def listen_for_input(bot, msg, text, cancelled_func=None, timeout=300):
+async def listen_for_input(bot, msg, prompt, timeout=300):
     """Prompt the user for input and wait for their response."""
-    await msg.reply(text)
+    chat_id = msg.chat.id
+    user_id = msg.from_user.id
 
+    # Send the prompt to the user
+    await bot.send_message(chat_id, prompt)
+
+    # Wait for the next message from the same user in the same chat
     try:
-        # Wait for the next message from the same user in the same chat
-        response = await bot.listen(filters.user(msg.from_user.id) & filters.chat(msg.chat.id), timeout=timeout)
-        if cancelled_func and await cancelled_func(response):
-            return None
+        response = await bot.listen(
+            chat_id,
+            filters=filters.private & filters.user(user_id),
+            timeout=timeout,
+        )
         return response
     except TimeoutError:
-        await bot.send_message(msg.chat.id, "❍ Time limit exceeded. Please try again.")
+        await bot.send_message(chat_id, "❍ Time limit exceeded. Please try again.")
         return None
+
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
-    ty = "Telethon" if telethon else "Pyrogram"
+    session_type = "Telethon" if telethon else "Pyrogram"
     if pyro_v3:
-        ty += " v3"
+        session_type += " v3"
     elif not old_pyro:
-        ty += " v2"
+        session_type += " v2"
     if is_bot:
-        ty += " Bot"
+        session_type += " Bot"
 
-    await msg.reply(f"**Starting {ty} session generation...**")
+    await msg.reply(f"**Starting {session_type} session generation...**")
 
-    # API ID and Hash
-    api_id_msg = await listen_for_input(bot, msg, "❍ Please send your **API_ID** to proceed.\n\n❍ Click on /skip to use the bot's API.", cancelled)
+    # Ask for API ID
+    api_id_msg = await listen_for_input(bot, msg, "❍ Please send your **API_ID** to proceed.\n\n❍ Click on /skip to use the bot's API.")
     if not api_id_msg or api_id_msg.text == "/skip":
         api_id, api_hash = config.API_ID, config.API_HASH
     else:
@@ -74,14 +81,14 @@ async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is
         except ValueError:
             await msg.reply("**API_ID must be an integer! Restart the process.**", reply_markup=InlineKeyboardMarkup(buttons_ques))
             return
-        api_hash_msg = await listen_for_input(bot, msg, "**Send your API_HASH:**", cancelled)
+        api_hash_msg = await listen_for_input(bot, msg, "**Send your API_HASH:**")
         if not api_hash_msg:
             return
         api_hash = api_hash_msg.text
 
-    # Phone number or bot token
+    # Ask for phone number or bot token
     phone_prompt = "**Enter your bot token (e.g., 12345:ABC):**" if is_bot else "**Enter your phone number (e.g., +123456789):**"
-    phone_number_msg = await listen_for_input(bot, msg, phone_prompt, cancelled)
+    phone_number_msg = await listen_for_input(bot, msg, phone_prompt)
     if not phone_number_msg:
         return
     phone_number = phone_number_msg.text
@@ -107,10 +114,10 @@ async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is
 
     # Handle OTP input
     if not is_bot:
-        otp_msg = await listen_for_input(bot, msg, "**Enter the OTP received on your phone:**", cancelled)
+        otp_msg = await listen_for_input(bot, msg, "**Enter the OTP received on your phone:**")
         if not otp_msg:
             return
-        otp = otp_msg.text.replace(" ", "")
+        otp = otp_msg.text.strip()
         try:
             if telethon:
                 await client.sign_in(phone_number, otp)
@@ -129,3 +136,4 @@ async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is
         await msg.reply(f"**Session generated successfully:**\n\n`{session_string}`\n\n**Keep it safe!**")
     finally:
         await client.disconnect()
+
