@@ -1,8 +1,8 @@
+import asyncio
 from pyrogram.types import Message
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from telethon import TelegramClient
-from asyncio import TimeoutError
 from telethon.sessions import StringSession
 from telethon.errors import (
     ApiIdInvalidError, PhoneNumberInvalidError, PhoneCodeInvalidError,
