@@ -3,35 +3,41 @@ from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup
 from StringBot.gen import generate_session, ask_ques, buttons_ques
 
-@Client.on_callback_query(filters.regex(pattern=r"^(generate|pyrogram|pyrogram_bot|telethon_bot|telethon|pyrogram_v3|pyrogram_v2)$"))
-async def _callbacks(bot: Client, callback_query: CallbackQuery):
-    query = callback_query.matches[0].group(1)
+@Client.on_callback_query(filters.regex(r"^(generate|pyrogram|pyrogram_bot|telethon_bot|telethon|pyrogram_v3|pyrogram_v2)$"))
+async def callback_handler(bot: Client, callback_query: CallbackQuery):
+    query = callback_query.data
     try:
         if query == "generate":
+            # Respond to the callback and show options
             await callback_query.answer()
-            await callback_query.message.reply(ask_ques, reply_markup=InlineKeyboardMarkup(buttons_ques))
+            await callback_query.message.edit_text(
+                ask_ques, reply_markup=InlineKeyboardMarkup(buttons_ques)
+            )
         elif query == "pyrogram_v3":
-            await callback_query.answer("» ᴛʜᴇ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ ᴡɪʟʟ ʙᴇ ᴏғ ᴩʏʀᴏɢʀᴀᴍ ᴠ3.", show_alert=True)
+            await callback_query.answer("Generating a Pyrogram v3 session.", show_alert=True)
             await generate_session(bot, callback_query.message, pyro_v3=True)
         elif query == "pyrogram_v2":
-            await callback_query.answer("» ᴛʜᴇ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ ᴡɪʟʟ ʙᴇ ᴏғ ᴩʏʀᴏɢʀᴀᴍ ᴠ2.", show_alert=True)
+            await callback_query.answer("Generating a Pyrogram v2 session.", show_alert=True)
             await generate_session(bot, callback_query.message)
         elif query == "pyrogram_bot":
-            await callback_query.answer("» ᴛʜᴇ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇᴅ ᴡɪʟʟ ʙᴇ ᴏғ ᴩʏʀᴏɢʀᴀᴍ ᴠ2.", show_alert=True)
+            await callback_query.answer("Generating a Pyrogram Bot session.", show_alert=True)
             await generate_session(bot, callback_query.message, is_bot=True)
         elif query == "telethon_bot":
-            await callback_query.answer()
+            await callback_query.answer("Generating a Telethon Bot session.", show_alert=True)
             await generate_session(bot, callback_query.message, telethon=True, is_bot=True)
         elif query == "telethon":
-            await callback_query.answer()
+            await callback_query.answer("Generating a Telethon session.", show_alert=True)
             await generate_session(bot, callback_query.message, telethon=True)
     except Exception as e:
-        # Print detailed traceback for debugging
+        # Log the error details for debugging and notify the user
         print(traceback.format_exc())
-        print(f"Error: {e}")
-        await callback_query.message.reply(ERROR_MESSAGE.format(str(e)))
+        await callback_query.message.reply(
+            ERROR_MESSAGE.format(str(e))
+        )
 
-ERROR_MESSAGE = "ᴡᴛғ ! sᴏᴍᴇᴛʜɪɴɢ ᴡᴇɴᴛ ᴡʀᴏɴɢ. \n\n**ᴇʀʀᴏʀ** : {} " \
-            "\n\n**ᴩʟᴇᴀsᴇ ғᴏʀᴡᴀʀᴅ ᴛʜɪs ᴍᴇssᴀɢᴇ ᴛᴏ @PBX_CHAT**, ɪғ ᴛʜɪs ᴍᴇssᴀɢᴇ " \
-            "ᴅᴏᴇsɴ'ᴛ ᴄᴏɴᴛᴀɪɴ ᴀɴʏ sᴇɴsɪᴛɪᴠᴇ ɪɴғᴏʀᴍᴀᴛɪᴏɴ " \
-            "ʙᴇᴄᴀᴜsᴇ ᴛʜɪs ᴇʀʀᴏʀ ɪs **ɴᴏᴛ ʟᴏɢɢᴇᴅ ʙʏ ᴛʜᴇ ʙᴏᴛ** !"
+ERROR_MESSAGE = (
+    "Something went wrong!\n\n"
+    "**Error:** {}\n\n"
+    "Please forward this message to @PBX_CHAT if this issue persists.\n"
+    "Make sure the error doesn't contain sensitive information, as this bot doesn't log errors."
+)
