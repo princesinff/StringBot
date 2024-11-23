@@ -50,9 +50,6 @@ async def listen_for_input(bot, msg, prompt, timeout=300):
 
     # Wait for user input using an event listener
     try:
-        response = await bot.listen(filters.private & filters.text & filters.user(user_id), timeout=timeout)
-        return response
-    except TimeoutError:
         await bot.send_message(chat_id, "❍ Time limit exceeded. Please try again.")
         return None
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
