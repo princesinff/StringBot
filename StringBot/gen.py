@@ -41,19 +41,25 @@ async def cancelled(msg):
     return False
 
 async def listen_for_input(bot, msg, prompt, timeout=300):
-    """Prompt the user and wait for their response."""
+    """Prompt the user and wait for their response using a custom handler."""
     chat_id = msg.chat.id
+    user_id = msg.from_user.id
 
     # Send the prompt
     await bot.send_message(chat_id, prompt)
 
+    response = None
+
+    def input_filter(client, message):
+        return message.chat.id == chat_id and message.from_user.id == user_id
+
+    # Use a custom handler to collect the input
     try:
-        # Use the `ask` method to get the user's next message
-        response = await bot.ask(chat_id, timeout=timeout, filters=filters.text)
-        return response
+        async with bot.listen(chat_id, filters=input_filter, timeout=timeout) as listener:
+            response = await listener.get()
     except TimeoutError:
         await bot.send_message(chat_id, "❍ Time limit exceeded. Please try again.")
-        return None
+    return response
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
     session_type = "Telethon" if telethon else "Pyrogram"
     if pyro_v3:
