@@ -1,3 +1,5 @@
+from pyrogram.types import Message
+from pyrogram.errors import TimeoutError
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from telethon import TelegramClient
