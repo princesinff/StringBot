@@ -55,6 +55,7 @@ async def listen_for_input(bot, msg: Message, prompt: str, timeout=300):
         return message.chat.id == chat_id and message.from_user.id == user_id and message.text
 
     try:
+        # Handle user response
         response = await bot.listen(filters.create(check_filter), timeout=timeout)
         return response
     except asyncio.TimeoutError:
@@ -63,6 +64,7 @@ async def listen_for_input(bot, msg: Message, prompt: str, timeout=300):
     except Exception as e:
         await bot.send_message(chat_id, f"❍ An unexpected error occurred: {e}")
         return None
+        
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
     ty = "Telethon" if telethon else "Pyrogram"
     if pyro_v3:
