@@ -41,6 +41,7 @@ async def cancelled(msg):
         return True
     return False
 
+
 async def listen_for_input(bot, msg: Message, prompt: str, timeout=300):
     """Prompt the user and wait for their response."""
     chat_id = msg.chat.id
@@ -48,46 +49,51 @@ async def listen_for_input(bot, msg: Message, prompt: str, timeout=300):
 
     await bot.send_message(chat_id, prompt)  # Send the prompt to the user
 
-    try:
-        for _ in range(timeout // 5):  # Retry checking every 5 seconds
-            async for user_msg in bot.get_chat_history(chat_id, limit=1):
-                if user_msg.from_user.id == user_id and user_msg.text:
-                    return user_msg  # Return the message if valid
-            await asyncio.sleep(5)  # Wait before checking again
+    response = None
 
+    def check_filter(_, message: Message):
+        return message.chat.id == chat_id and message.from_user.id == user_id and message.text
+
+    try:
+        response = await bot.listen(filters.create(check_filter), timeout=timeout)
+        return response
+    except asyncio.TimeoutError:
         await bot.send_message(chat_id, "❍ Time limit exceeded. Please try again.")
         return None
     except Exception as e:
-        await bot.send_message(chat_id, f"❍ An error occurred: {e}")
+        await bot.send_message(chat_id, f"❍ An unexpected error occurred: {e}")
         return None
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
-    session_type = "Telethon" if telethon else "Pyrogram"
+    ty = "Telethon" if telethon else "Pyrogram"
     if pyro_v3:
-        session_type += " v3"
+        ty += " v3"
     elif not old_pyro:
-        session_type += " v2"
+        ty += " v2"
     if is_bot:
-        session_type += " Bot"
+        ty += " Bot"
 
-    await msg.reply(f"**Starting {session_type} session generation...**")
+    await msg.reply(f"**Starting {ty} session generation...**")
 
-    # Ask for API ID
+    # API ID and Hash
     api_id_msg = await listen_for_input(bot, msg, "❍ Please send your **API_ID** to proceed.\n\n❍ Click on /skip to use the bot's API.", timeout=300)
-    if not api_id_msg or api_id_msg.text == "/skip":
+    if not api_id_msg or api_id_msg.text.lower() == "/skip":
         api_id, api_hash = config.API_ID, config.API_HASH
     else:
         try:
             api_id = int(api_id_msg.text)
         except ValueError:
-            await msg.reply("**API_ID must be an integer! Restart the process.**", reply_markup=InlineKeyboardMarkup(buttons_ques))
+            await msg.reply("**API_ID must be an integer! Restart the process.**")
             return
-        api_hash_msg = await listen_for_input(bot, msg, "**Send your API_HASH:**", timeout=300)
+        api_hash_msg = await listen_for_input(bot, msg, "❍ Please send your **API_HASH** to proceed.", timeout=300)
         if not api_hash_msg:
             return
         api_hash = api_hash_msg.text
 
-    # Ask for phone number or bot token
-    phone_prompt = "**Enter your bot token (e.g., 12345:ABC):**" if is_bot else "**Enter your phone number (e.g., +123456789):**"
+    # Phone number or bot token
+    if not is_bot:
+        phone_prompt = "❍ Enter your phone number (e.g., +123456789):"
+    else:
+        phone_prompt = "❍ Enter your bot token (e.g., 12345:ABC):"
     phone_number_msg = await listen_for_input(bot, msg, phone_prompt, timeout=300)
     if not phone_number_msg:
         return
@@ -105,29 +111,23 @@ async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is
             await client.send_code_request(phone_number)
         elif not is_bot:
             await client.send_code(phone_number)
-    except (ApiIdInvalid, ApiIdInvalidError):
-        await msg.reply("**Invalid API_ID/API_HASH combination. Restart the process.**")
-        return
-    except (PhoneNumberInvalid, PhoneNumberInvalidError):
-        await msg.reply("**Invalid phone number. Restart the process.**")
+    except Exception as e:
+        await msg.reply(f"**An error occurred while initializing the client: {e}**")
         return
 
     # Handle OTP input
     if not is_bot:
-        otp_msg = await listen_for_input(bot, msg, "**Enter the OTP received on your phone:**", timeout=300)
+        otp_msg = await listen_for_input(bot, msg, "❍ Enter the OTP received on your phone:", timeout=300)
         if not otp_msg:
             return
-        otp = otp_msg.text.strip()
+        otp = otp_msg.text.replace(" ", "")
         try:
             if telethon:
                 await client.sign_in(phone_number, otp)
             else:
                 await client.sign_in(phone_number, otp)
-        except (PhoneCodeInvalid, PhoneCodeInvalidError):
-            await msg.reply("**Invalid OTP. Restart the process.**")
-            return
-        except (PhoneCodeExpired, PhoneCodeExpiredError):
-            await msg.reply("**OTP expired. Restart the process.**")
+        except Exception as e:
+            await msg.reply(f"**An error occurred during OTP verification: {e}**")
             return
 
     # Generate session string
