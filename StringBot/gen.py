@@ -46,18 +46,19 @@ async def listen_for_input(bot, msg: Message, prompt: str, timeout=300):
     chat_id = msg.chat.id
     user_id = msg.from_user.id
 
+    await bot.send_message(chat_id, prompt)  # Send the prompt to the user
+
     try:
-        # Send prompt and wait for response
-        response = await bot.ask(
-            chat_id=chat_id,
-            text=prompt,
-            filters=filters.private & filters.user(user_id),
-            timeout=timeout
-        )
-        return response
-    except TimeoutError:
-        # Handle timeout
+        for _ in range(timeout // 5):  # Retry checking every 5 seconds
+            async for user_msg in bot.get_chat_history(chat_id, limit=1):
+                if user_msg.from_user.id == user_id and user_msg.text:
+                    return user_msg  # Return the message if valid
+            await asyncio.sleep(5)  # Wait before checking again
+
         await bot.send_message(chat_id, "❍ Time limit exceeded. Please try again.")
+        return None
+    except Exception as e:
+        await bot.send_message(chat_id, f"❍ An error occurred: {e}")
         return None
 async def generate_session(bot, msg: Message, telethon=False, old_pyro=False, is_bot=False, pyro_v3=False):
     session_type = "Telethon" if telethon else "Pyrogram"
