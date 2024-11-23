@@ -40,9 +40,17 @@ async def cancelled(msg):
     return False
 
 async def listen_for_input(bot, msg, text, cancelled_func):
+    await msg.reply(text)
+
+    # Listen for the next message from the same user
+    user_id = msg.from_user.id
+
+    def check_reply(reply):
+        return reply.from_user.id == user_id
+
     try:
-        await msg.reply(text)
-        user_msg = await bot.ask(msg.chat.id, filters=filters.text, timeout=300)
+        # Wait for a response with a filter for user ID
+        user_msg = await bot.listen(msg.chat.id, filters=filters.create(check_reply), timeout=300)
         if await cancelled_func(user_msg):
             return None
         return user_msg
