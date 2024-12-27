@@ -23,6 +23,7 @@ async def start(client, message: Message):
         ]
     ]
 
+    # Send a message to the user who started the bot
     await client.send_photo(
         chat_id=message.chat.id,
         photo="https://files.catbox.moe/bl1can.jpg",
@@ -36,6 +37,12 @@ async def start(client, message: Message):
 
 ❍ ɪғ ʏᴏᴜ ɴᴇᴇᴅ ᴀɴʏ ʜᴇʟᴘ, ᴛʜᴇɴ ᴅᴍ ᴛᴏ ᴍʏ ᴏᴡɴᴇʀ: [ʙᴀᴅ ᴹᵁᴺᴰᴬ](tg://user?id={OWNER_ID}) ❐""",
         reply_markup=InlineKeyboardMarkup(buttons)
+    )
+
+    # Notify the owner about the new user
+    await client.send_message(
+        chat_id=OWNER_ID,
+        text=f"❍ ɴᴇᴡ ᴜsᴇʀ ꜱᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ\n\n❍ ᴜsᴇʀɴᴀᴍᴇ: @{message.from_user.username or 'N/A'}\n❍ ɴᴀᴍᴇ: {message.from_user.first_name} {message.from_user.last_name or ''}\n❍ ᴜsᴇʀ ɪᴅ: `{message.from_user.id}`"
     )
 
 @Client.on_callback_query(filters.regex("generate_session"))
