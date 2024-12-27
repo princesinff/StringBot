@@ -27,7 +27,7 @@ async def start(client, message: Message):
         chat_id=message.chat.id,
         photo="https://files.catbox.moe/bl1can.jpg",
         caption=f"""❍ ʜᴇʏ {message.from_user.mention} ❤️
-❍ ɪ ᴀᴍ {me2},
+❍ ɪ ᴀᴍ {me2}
 
 ❍ Aɴ ᴏᴘᴇɴ sᴏᴜʀᴄᴇ sᴛʀɪɴɢ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴏʀ ʙᴏᴛ, ᴡʀɪᴛᴛᴇɴ ɪɴ ᴛᴇʟᴇɢʀᴀᴍ ᴛᴏᴏʟꜱ.
 
