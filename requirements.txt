@@ -1,1 +1,3 @@
-
+pyrogram
+Flask==2.2.3
+python-dotenv==1.0.1
