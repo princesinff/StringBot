@@ -1,18 +1,19 @@
+is same code ko fix karke do or kuj bi change mat karna 1st to isme jo api id hash na usko ise kardo us par tap karte hi copy ho jae api id par kare to api id copy ho jae hash par kare to hash copy ho jae or button na bna na MATLAB sida hi copy ho jae text 
+
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, WebAppInfo
 
 from config import OWNER_ID, SUPPORT_CHAT
-
-API_ID = "25742938"
-API_HASH = "b35b715fe8dc0a58e8048988286fc5b6"
-
 
 @Client.on_message(filters.command("start") & filters.private & filters.incoming)
 async def start(client, message: Message):
     me2 = (await client.get_me()).mention
     buttons = [
         [
-            InlineKeyboardButton("💢 ɢᴇɴᴇʀᴀᴛᴇ sᴇssɪᴏɴ 💢", callback_data="generate_session")
+            InlineKeyboardButton(
+                "💢 ɢᴇɴᴇʀᴀᴛᴇ sᴇssɪᴏɴ 💢",
+                callback_data="generate_session"
+            )
         ],
         [
             InlineKeyboardButton("📂 sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ 📂", url=SUPPORT_CHAT),
@@ -38,14 +39,9 @@ async def start(client, message: Message):
         reply_markup=InlineKeyboardMarkup(buttons)
     )
 
-
 @Client.on_callback_query(filters.regex("generate_session"))
 async def generate_session(client, callback_query):
     buttons = [
-        [
-            InlineKeyboardButton("🔑 Copy API_ID", callback_data="copy_api_id"),
-            InlineKeyboardButton("🔑 Copy API_HASH", callback_data="copy_api_hash")
-        ],
         [
             InlineKeyboardButton(
                 "ᴘʏʀᴏɢʀᴀᴍ 💻",
@@ -59,16 +55,6 @@ async def generate_session(client, callback_query):
     ]
 
     await callback_query.message.edit_text(
-        text=f"❖ ᴘʟᴇᴀꜱᴇ ᴄʜᴏᴏꜱᴇ ᴀ ᴏᴘᴛɪᴏɴ \n❖ API_ID: {API_ID}\n❖ API_HASH: {API_HASH}",
+        text="❖ ᴘʟᴇᴀꜱᴇ ᴄʜᴏᴏꜱᴇ ᴀ ᴏᴘᴛɪᴏɴ \n❖ API_ID : `25742938`\n❖ API_HASH : `b35b715fe8dc0a58e8048988286fc5b6`",
         reply_markup=InlineKeyboardMarkup(buttons)
-    )
-
-
-@Client.on_callback_query(filters.regex("copy_api_id"))
-async def copy_api_id(client, callback_query):
-    await callback_query.answer(f"Copied API_ID: {25742938}", show_alert=True)
-
-
-@Client.on_callback_query(filters.regex("copy_api_hash"))
-async def copy_api_hash(client, callback_query):
-    await callback_query.answer(f"Copied API_HASH: {b35b715fe8dc0a58e8048988286fc5b6}", show_alert=True)
+)
