@@ -1,5 +1,3 @@
-is same code ko fix karke do or kuj bi change mat karna 1st to isme jo api id hash na usko ise kardo us par tap karte hi copy ho jae api id par kare to api id copy ho jae hash par kare to hash copy ho jae or button na bna na MATLAB sida hi copy ho jae text 
-
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, WebAppInfo
 
