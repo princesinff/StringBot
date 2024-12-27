@@ -43,7 +43,7 @@ Press `Ctrl+C` when you're done with editing env and `:wq` to save the env<br>
 - Install tmux to keep running your bot when you close the terminal by :
 `sudo apt install tmux && tmux`
 - Finally run the bot by :
-`bash start`
+  `python3 main.py`
 - For getting out from tmux session<br>
 Press `Ctrl+b` and then `d`
 
