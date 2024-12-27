@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, WebAppInfo
 
 
-@Client.on_message(filters.command(["generate", "gen"]) & filters.private & filters.incoming)
+@Client.on_message(filters.command(["genrate", "gen"]) & filters.private & filters.incoming)
 async def generate(client, message: Message):
     me2 = (await client.get_me()).mention
     buttons = [
@@ -19,7 +19,8 @@ async def generate(client, message: Message):
     ]
 
     await message.reply_text(
-        text=f"""❍ ʜᴇʏ {message.from_user.mention} ✤,
+        text=f"""❍ ʜᴇʏ {message.from_user.mention} ✤
+        
 ❍ ɪ ᴀᴍ {me2},
 
 ❍ ᴘʟᴇᴀꜱᴇ ᴄʜᴏᴏꜱᴇ ᴀɴ ᴏᴘᴛɪᴏɴ ʙᴇʟᴏᴡ ᴛᴏ ꜱᴛᴀʀᴛ.
