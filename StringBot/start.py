@@ -3,23 +3,24 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, 
 
 from config import OWNER_ID, SUPPORT_CHAT
 
+API_ID = "25742938"
+API_HASH = "b35b715fe8dc0a58e8048988286fc5b6"
+
+
 @Client.on_message(filters.command("start") & filters.private & filters.incoming)
 async def start(client, message: Message):
     me2 = (await client.get_me()).mention
     buttons = [
         [
-            InlineKeyboardButton(
-                "String Session Generate",
-                callback_data="generate_session"
-            )
+            InlineKeyboardButton("💢 ɢᴇɴᴇʀᴀᴛᴇ sᴇssɪᴏɴ 💢", callback_data="generate_session")
         ],
         [
-            InlineKeyboardButton("📂 Support Chat 📂", url=SUPPORT_CHAT),
-            InlineKeyboardButton("💫 Updates 💫", url="https://t.me/HEROKUBIN_01")
+            InlineKeyboardButton("📂 sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ 📂", url=SUPPORT_CHAT),
+            InlineKeyboardButton("💫 ᴜᴘᴅᴀᴛᴇs 💫", url="https://t.me/HEROKUBIN_01")
         ],
         [
-            InlineKeyboardButton("📌 Source 📌", url="https://github.com/Badhacker98/StringBot/fork"),
-            InlineKeyboardButton("🎵 Music Bot 🎶", url="https://t.me/Gaana_MusicBot")
+            InlineKeyboardButton("📌 sᴏᴜʀᴄᴇ 📌", url="https://github.com/Badhacker98/StringBot/fork"),
+            InlineKeyboardButton("🎵 ᴍᴜsɪᴄ ʙᴏᴛ 🎶", url="https://t.me/Gaana_MusicBot")
         ]
     ]
 
@@ -29,7 +30,7 @@ async def start(client, message: Message):
         caption=f"""❍ ʜᴇʏ {message.from_user.mention} ✤,
 ❍ ɪ ᴀᴍ {me2},
 
-❍ Aɴ ᴏᴘᴇɴ sᴏᴜʀᴄᴇ sᴛʀɪɴɢ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴏʀ ʙᴏᴛ, ᴡʀɪᴛᴛᴇɴ ɪɴ ᴩʏᴛʜᴏɴ ᴡɪᴛʜ ᴛʜᴇ ʜᴇʟᴩ ᴏғ ᴩʏʀᴏɢʀᴀᴍ.
+❍ Aɴ ᴏᴘᴇɴ sᴏᴜʀᴄᴇ sᴛʀɪɴɢ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴏʀ ʙᴏᴛ, ᴡʀɪᴛᴛᴇɴ ɪɴ ᴛᴇʟᴇɢʀᴀᴍ ᴛᴏᴏʟꜱ.
 
 ❍ ᴘʟᴇᴀꜱᴇ ᴄʟɪᴄᴋ ᴏɴ 'ꜱᴛʀɪɴɢ ꜱᴇꜱꜱɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇ' ᴛᴏ ꜱᴛᴀʀᴛ.
 
@@ -37,22 +38,37 @@ async def start(client, message: Message):
         reply_markup=InlineKeyboardMarkup(buttons)
     )
 
+
 @Client.on_callback_query(filters.regex("generate_session"))
 async def generate_session(client, callback_query):
     buttons = [
         [
+            InlineKeyboardButton("🔑 Copy API_ID", callback_data="copy_api_id"),
+            InlineKeyboardButton("🔑 Copy API_HASH", callback_data="copy_api_hash")
+        ],
+        [
             InlineKeyboardButton(
-                "Pyrogram",
+                "ᴘʏʀᴏɢʀᴀᴍ 💻",
                 web_app=WebAppInfo(url="https://telegram.tools/session-string-generator#pyrogram,user")
             ),
             InlineKeyboardButton(
-                "Telethon",
+                "ᴛᴇʟᴇᴛʜᴏɴ 💻",
                 web_app=WebAppInfo(url="https://telegram.tools/session-string-generator#telethon,user")
             )
         ]
     ]
 
     await callback_query.message.edit_text(
-        text="Select the Python library for which you want to generate a string session. It will open in a mini web app:",
+        text=f"❖ ᴘʟᴇᴀꜱᴇ ᴄʜᴏᴏꜱᴇ ᴀ ᴏᴘᴛɪᴏɴ \n❖ API_ID: {API_ID}\n❖ API_HASH: {API_HASH}",
         reply_markup=InlineKeyboardMarkup(buttons)
     )
+
+
+@Client.on_callback_query(filters.regex("copy_api_id"))
+async def copy_api_id(client, callback_query):
+    await callback_query.answer(f"Copied API_ID: {25742938}", show_alert=True)
+
+
+@Client.on_callback_query(filters.regex("copy_api_hash"))
+async def copy_api_hash(client, callback_query):
+    await callback_query.answer(f"Copied API_HASH: {b35b715fe8dc0a58e8048988286fc5b6}", show_alert=True)
