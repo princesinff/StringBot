@@ -26,14 +26,15 @@ async def start(client, message: Message):
     await client.send_photo(
         chat_id=message.chat.id,
         photo="https://files.catbox.moe/bl1can.jpg",
-        caption=f"""❍ ʜᴇʏ {message.from_user.mention} ❤️
+        caption=f"""❍ ʜᴇʏ {message.from_user.mention} 
+        
 ❍ ɪ ᴀᴍ {me2}
 
 ❍ Aɴ ᴏᴘᴇɴ sᴏᴜʀᴄᴇ sᴛʀɪɴɢ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴏʀ ʙᴏᴛ, ᴡʀɪᴛᴛᴇɴ ɪɴ ᴛᴇʟᴇɢʀᴀᴍ ᴛᴏᴏʟꜱ.
 
 ❍ ᴘʟᴇᴀꜱᴇ ᴄʟɪᴄᴋ ᴏɴ 'ꜱᴛʀɪɴɢ ꜱᴇꜱꜱɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇ' ᴛᴏ ꜱᴛᴀʀᴛ.
 
-❍ ɪғ ʏᴏᴜ ɴᴇᴇᴅ ᴀɴʏ ʜᴇʟᴘ, ᴛʜᴇɴ ᴅᴍ ᴛᴏ ᴍʏ ᴏᴡɴᴇʀ: [ʙᴀᴅ ᴹᵁᴺᴰᴬ](tg://user?id={OWNER_ID}) ❤️""",
+❍ ɪғ ʏᴏᴜ ɴᴇᴇᴅ ᴀɴʏ ʜᴇʟᴘ, ᴛʜᴇɴ ᴅᴍ ᴛᴏ ᴍʏ ᴏᴡɴᴇʀ: [ʙᴀᴅ ᴹᵁᴺᴰᴬ](tg://user?id={OWNER_ID}) ✨""",
         reply_markup=InlineKeyboardMarkup(buttons)
     )
 
