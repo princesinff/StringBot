@@ -8,8 +8,10 @@ async def start(client, message: Message):
     me2 = (await client.get_me()).mention
     buttons = [
         [
-            InlineKeyboardButton("Pyrogram", callback_data="pyrogram"),
-            InlineKeyboardButton("Telethon", callback_data="telethon")
+            InlineKeyboardButton(
+                "String Session Generate",
+                callback_data="generate_session"
+            )
         ],
         [
             InlineKeyboardButton("📂 Support Chat 📂", url=SUPPORT_CHAT),
@@ -29,29 +31,28 @@ async def start(client, message: Message):
 
 ❍ Aɴ ᴏᴘᴇɴ sᴏᴜʀᴄᴇ sᴛʀɪɴɢ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴏʀ ʙᴏᴛ, ᴡʀɪᴛᴛᴇɴ ɪɴ ᴩʏᴛʜᴏɴ ᴡɪᴛʜ ᴛʜᴇ ʜᴇʟᴩ ᴏғ ᴩʏʀᴏɢʀᴀᴍ.
 
-❍ ᴘʟᴇᴀꜱᴇ ᴄʜᴏᴏꜱᴇ ᴛʜᴇ ᴘʏᴛʜᴏɴ ʟɪʙʀᴀʀʏ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ɢᴇɴᴇʀᴀᴛᴇ ꜱᴛʀɪɴɢ ꜱᴇssɪᴏɴ ꜰᴏʀ.
+❍ ᴘʟᴇᴀꜱᴇ ᴄʟɪᴄᴋ ᴏɴ 'ꜱᴛʀɪɴɢ ꜱᴇꜱꜱɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇ' ᴛᴏ ꜱᴛᴀʀᴛ.
 
 ❍ ɪғ ʏᴏᴜ ɴᴇᴇᴅ ᴀɴʏ ʜᴇʟᴘ, ᴛʜᴇɴ ᴅᴍ ᴛᴏ ᴍʏ ᴏᴡɴᴇʀ: [ʙᴀᴅ ᴹᵁᴺᴰᴬ](tg://user?id={OWNER_ID})!""",
         reply_markup=InlineKeyboardMarkup(buttons)
     )
 
-@Client.on_callback_query(filters.regex("pyrogram|telethon"))
-async def handle_callback_query(client, callback_query):
-    if callback_query.data == "pyrogram":
-        text = "You selected Pyrogram. Click below to generate your string session."
-    elif callback_query.data == "telethon":
-        text = "You selected Telethon. Click below to generate your string session."
-
+@Client.on_callback_query(filters.regex("generate_session"))
+async def generate_session(client, callback_query):
     buttons = [
         [
             InlineKeyboardButton(
-                "String Session Generate",
+                "Pyrogram",
                 web_app=WebAppInfo(url="https://telegram.tools/session-string-generator#pyrogram,user")
+            ),
+            InlineKeyboardButton(
+                "Telethon",
+                web_app=WebAppInfo(url="https://telegram.tools/session-string-generator#telethon,user")
             )
         ]
     ]
 
     await callback_query.message.edit_text(
-        text=text,
+        text="Select the Python library for which you want to generate a string session. It will open in a mini web app:",
         reply_markup=InlineKeyboardMarkup(buttons)
     )
