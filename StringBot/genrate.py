@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, WebAppInfo
 
 
-@Client.on_message(filters.command(["genrate", "gen"]) & filters.private & filters.incoming)
+@Client.on_message(filters.command(["genrate", "gen" ,"generate"]) & filters.private & filters.incoming)
 async def generate(client, message: Message):
     me2 = (await client.get_me()).mention
     buttons = [
