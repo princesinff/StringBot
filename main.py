@@ -3,6 +3,7 @@ import time
 import logging
 import sys
 from pyrogram import Client, idle
+from pyromod import listen  # Ab ye properly work karega
 from pyrogram.errors import ApiIdInvalid, ApiIdPublishedFlood, AccessTokenInvalid
 
 logging.basicConfig(
