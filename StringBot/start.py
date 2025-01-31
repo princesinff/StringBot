@@ -1,4 +1,4 @@
-# Copyright (C) 2024 by Badhacker98@Github, < https://github.com/Badhacker98 >.
+# Copyright (C) 2025 by Badhacker98@Github, < https://github.com/Badhacker98 >.
 #
 # This file is part of < https://github.com/Badhacker98/StringBot > project,
 # and is released under the license agreement specified in:
@@ -22,12 +22,12 @@ async def start(client, message: Message):
             )
         ],
         [
-            InlineKeyboardButton("▪️sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ▪️", url=SUPPORT_CHAT),
-            InlineKeyboardButton("▪️ᴜᴘᴅᴀᴛᴇs ▪️", url="https://t.me/HEROKUBIN_01")
+            InlineKeyboardButton("▪️sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ▪️", url="https://t.me/APNA_CHUB_09"),
+            InlineKeyboardButton("▪️ᴜᴘᴅᴀᴛᴇs ▪️", url="https://t.me/SWEETY_BOT_UPDATE")
         ],
         [
-            InlineKeyboardButton("▪️ sᴏᴜʀᴄᴇ ▪️", url="https://github.com/Badhacker98/StringBot/fork"),
-            InlineKeyboardButton("▪️ ᴍᴜsɪᴄ ʙᴏᴛ ▪️", url="https://t.me/Gaana_MusicBot")
+            InlineKeyboardButton("▪️ ᴏᴡɴᴇʀ ▪️", url="https://t.me/PRINCE_WEBZ"),
+            InlineKeyboardButton("▪️ ʀᴇᴘᴏ ▪️", url="https")
         ]
     ]
 
@@ -43,7 +43,7 @@ async def start(client, message: Message):
 
 ❍ ᴘʟᴇᴀꜱᴇ ᴄʟɪᴄᴋ ᴏɴ 'ꜱᴛʀɪɴɢ ꜱᴇꜱꜱɪᴏɴ ɢᴇɴᴇʀᴀᴛᴇ' ᴛᴏ ꜱᴛᴀʀᴛ.
 
-❍ ɪғ ʏᴏᴜ ɴᴇᴇᴅ ᴀɴʏ ʜᴇʟᴘ, ᴛʜᴇɴ ᴅᴍ ᴛᴏ ᴍʏ ᴏᴡɴᴇʀ: [⏤͟͟͞͞🥀➣Bᴀᴅ❤︎ ᴍᴜɴᴅᴀ ➻ >•⏤͟͟͞͞‌](tg://user?id={OWNER_ID}) """,
+❍ ɪғ ʏᴏᴜ ɴᴇᴇᴅ ᴀɴʏ ʜᴇʟᴘ, ᴛʜᴇɴ ᴅᴍ ᴛᴏ ᴍʏ ᴏᴡɴᴇʀ: [⏤͟͟͞͞🥀➣  ˹ Ꭾʀɪ֟፝ؖ۬ɴᴄᴇ  ✯ ᴡᴇʙᴢ ˼•⏤͟͟͞͞‌](tg://user?id={OWNER_ID}) """,
         reply_markup=InlineKeyboardMarkup(buttons)
     )
 
