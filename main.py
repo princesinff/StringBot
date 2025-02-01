@@ -1,9 +1,8 @@
 import config
 import time
 import logging
-import sys
 from pyrogram import Client, idle
-from pyromod import listen  # Ab ye properly work karega
+from pyromod import listen  # type: ignore
 from pyrogram.errors import ApiIdInvalid, ApiIdPublishedFlood, AccessTokenInvalid
 
 logging.basicConfig(
@@ -11,37 +10,26 @@ logging.basicConfig(
 )
 
 StartTime = time.time()
-
 app = Client(
     "Anonymous",
     api_id=config.API_ID,
     api_hash=config.API_HASH,
     bot_token=config.BOT_TOKEN,
     in_memory=True,
-    plugins=dict(root="StringBot"),
+    plugins=dict(root="StringGenBot"),
 )
 
+
 if __name__ == "__main__":
-    print("StringBot Starting...")
+    print("𝐒𝐭𝐚𝐫𝐭𝐢𝐧𝐠 𝐘𝐨𝐮𝐫 𝐒𝐭𝐫𝐢𝐧𝐠 𝐁𝐨𝐭...")
     try:
         app.start()
-    except ApiIdInvalid:
-        print("Error: Invalid API_ID or API_HASH. Please check config.py")
-        sys.exit(1)
-    except ApiIdPublishedFlood:
-        print("Error: API_ID is reported as spam. Use a new API_ID.")
-        sys.exit(1)
+    except (ApiIdInvalid, ApiIdPublishedFlood):
+        raise Exception("Your API_ID/API_HASH is not valid.")
     except AccessTokenInvalid:
-        print("Error: Invalid BOT_TOKEN. Please check config.py")
-        sys.exit(1)
-
-    try:
-        uname = app.get_me().username
-        print(f"@{uname} Started Successfully!")
-    except Exception as e:
-        print(f"Error getting bot username: {e}")
-        sys.exit(1)
-
-    idle()  # Keep bot running
+        raise Exception("Your BOT_TOKEN is not valid.")
+    uname = app.get_me().username
+    print(f"@{uname} 𝐒𝐓𝐀𝐑𝐓𝐄𝐃 𝐒𝐔𝐂𝐄𝐒𝐒𝐅𝐔𝐋𝐋𝐘. 𝐌𝐀𝐃𝐄 𝐁𝐘 @PRINCE_WEBZ 🤗")
+    idle()
     app.stop()
-    print("Stopping StringBot...")
+    print("𝗕𝗢𝗧 𝗦𝗧𝗢𝗣𝗣𝗘𝗗 𝗕𝗬 𝗕𝗬 !")
